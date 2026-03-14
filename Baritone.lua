@@ -28,7 +28,7 @@ function Baritone:CreateWindow(info)
     local ScreenGui = New("ScreenGui", {
         Name = "BaritoneUI",
         ResetOnSpawn = false,
-        ScreenGui.ClipsDescendants = false
+        ClipsDescendants = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
     local ok = pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
