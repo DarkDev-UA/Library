@@ -41,6 +41,7 @@ function Baritone:CreateWindow(info)
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromOffset(550, 380),
         ZIndex = 1,
+        ClipsDescendants = false,
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 8), Parent = MainFrame })
@@ -55,6 +56,7 @@ function Baritone:CreateWindow(info)
         Size = UDim2.fromOffset(40, 40),
         Text = "",
         ZIndex = 1,
+        ClipsDescendants = false,
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(1, 0), Parent = OpenButton })
@@ -112,6 +114,7 @@ function Baritone:CreateWindow(info)
         Size = UDim2.fromOffset(0, 0),
         Visible = false,
         ZIndex = 6,
+        ClipsDescendants = false,
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 8), Parent = Dialog })
