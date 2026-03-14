@@ -71,7 +71,7 @@ function Baritone:CreateWindow(info)
         BackgroundTransparency = 1,
         Position = UDim2.new(1, -35, 0.5, 0),
         Size = UDim2.fromOffset(20, 20),
-        Text = "—",
+        Text = "-",
         TextColor3 = Theme.TextDim,
         TextSize = 16,
         ZIndex = 1,
@@ -98,7 +98,7 @@ function Baritone:CreateWindow(info)
         Size = UDim2.fromScale(1, 1),
         Visible = false,
         ZIndex = 5,
-        Parent = ScreenGui,
+        Parent = MainFrame,
     })
 
     -- Диалог
@@ -178,6 +178,25 @@ function Baritone:CreateWindow(info)
             dragging = false
         end
     end)
+    local openDragging, openDragStart, openStartPos
+    OpenButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            openDragging = true
+            openDragStart = input.Position
+            openStartPos = OpenButton.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if openDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - openDragStart
+            OpenButton.Position = UDim2.new(openStartPos.X.Scale, openStartPos.X.Offset + delta.X, openStartPos.Y.Scale, openStartPos.Y.Offset + delta.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            openDragging = false
+        end
+    end)
 
     -- Логика кнопок
     OpenButton.MouseButton1Click:Connect(function()
@@ -228,6 +247,8 @@ function Baritone:CreateWindow(info)
     end
 
     CloseButton.MouseButton1Click:Connect(showDialog)
+    
+    ScreenGui.ClipsDescendants = false
 
     return Window
 end
