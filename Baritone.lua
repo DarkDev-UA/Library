@@ -30,8 +30,8 @@ function Baritone:CreateWindow(info)
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
-    pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
-    if not ScreenGui.Parent then ScreenGui.Parent = LocalPlayer.PlayerGui end
+    local ok = pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
+    if not ok then ScreenGui.Parent = LocalPlayer.PlayerGui end
 
     local MainFrame = New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
