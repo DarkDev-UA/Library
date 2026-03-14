@@ -28,6 +28,7 @@ function Baritone:CreateWindow(info)
     local ScreenGui = New("ScreenGui", {
         Name = "BaritoneUI",
         ResetOnSpawn = false,
+        ScreenGui.ClipsDescendants = false
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
     local ok = pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
@@ -100,6 +101,7 @@ function Baritone:CreateWindow(info)
         ZIndex = 5,
         Parent = MainFrame,
     })
+    New("UICorner", { CornerRadius = UDim.new(0, 8), Parent = Overlay })
 
     -- Диалог
     local Dialog = New("Frame", {
@@ -220,17 +222,34 @@ function Baritone:CreateWindow(info)
         Overlay.Visible = true
         TweenService:Create(Overlay, tweenInfo, { BackgroundTransparency = 0.5 }):Play()
         TweenService:Create(MainFrame, tweenInfo, { Position = UDim2.fromScale(0.5, 0.5) }):Play()
-
+        
         task.wait(0.3)
         Dialog.Visible = true
-        Dialog.Size = UDim2.fromOffset(0, 0)
-        TweenService:Create(Dialog, tweenBack, { Size = UDim2.fromOffset(280, 120) }):Play()
+        Dialog.Size = UDim2.fromOffset(280, 120)
+        Dialog.BackgroundTransparency = 1
+        for _, v in pairs(Dialog:GetDescendants()) do
+            if v:IsA("TextLabel") or v:IsA("TextButton") then
+                v.TextTransparency = 1
+                v.BackgroundTransparency = 1
+            end
+        end
+        TweenService:Create(Dialog, tweenInfo, { BackgroundTransparency = 0 }):Play()
+        for _, v in pairs(Dialog:GetDescendants()) do
+            if v:IsA("TextLabel") or v:IsA("TextButton") then
+                TweenService:Create(v, tweenInfo, { TextTransparency = 0, BackgroundTransparency = 0 }):Play()
+            end
+        end
 
         local cancelConn, confirmConn
         cancelConn = CancelBtn.MouseButton1Click:Connect(function()
             cancelConn:Disconnect()
             confirmConn:Disconnect()
-            TweenService:Create(Dialog, tweenInfo, { Size = UDim2.fromOffset(0, 0) }):Play()
+            TweenService:Create(Dialog, tweenInfo, { BackgroundTransparency = 1 }):Play()
+            for _, v in pairs(Dialog:GetDescendants()) do
+                if v:IsA("TextLabel") or v:IsA("TextButton") then
+                    TweenService:Create(v, tweenInfo, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
+                end
+            end
             TweenService:Create(Overlay, tweenInfo, { BackgroundTransparency = 1 }):Play()
             task.wait(0.3)
             Dialog.Visible = false
@@ -247,8 +266,6 @@ function Baritone:CreateWindow(info)
     end
 
     CloseButton.MouseButton1Click:Connect(showDialog)
-    
-    ScreenGui.ClipsDescendants = false
 
     return Window
 end
