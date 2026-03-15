@@ -5,6 +5,14 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
+local IsMobile = (function()
+    local ok, platform = pcall(function() return UserInputService:GetPlatform() end)
+    if ok then
+        return platform == Enum.Platform.Android or platform == Enum.Platform.IOS
+    end
+    return UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+end)()
+
 local Theme = {
     Background = Color3.fromRGB(18, 18, 18),
     Surface = Color3.fromRGB(24, 24, 24),
@@ -43,7 +51,7 @@ function Baritone:CreateWindow(info)
     local OpenButton = New("TextButton", {
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
-        Position = UDim2.fromOffset(10, 10),
+        Position = UDim2.fromOffset(10, 55),
         Size = UDim2.fromOffset(120, 34),
         Text = title,
         TextColor3 = Theme.TextDim,
@@ -57,17 +65,23 @@ function Baritone:CreateWindow(info)
     New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = OpenButton })
 
     -- Драг кнопки открытия
-    local openDragging, openDragStart, openStartPos
+    local openDragging, openDragStart, openStartPos, openMoved
+    local openLocked = false
+
     OpenButton.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             openDragging = true
+            openMoved = false
             openDragStart = input.Position
             openStartPos = OpenButton.Position
         end
     end)
     UserInputService.InputChanged:Connect(function(input)
-        if openDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        if openDragging and not openLocked and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - openDragStart
+            if math.abs(delta.X) > 4 or math.abs(delta.Y) > 4 then
+                openMoved = true
+            end
             OpenButton.Position = UDim2.new(0, openStartPos.X.Offset + delta.X, 0, openStartPos.Y.Offset + delta.Y)
         end
     end)
@@ -301,8 +315,7 @@ function Baritone:CreateWindow(info)
     end)
     OpenButton.MouseButton1Click:Connect(function()
         if dialogOpen then return end
-        local moved = openDragStart and (OpenButton.Position.X.Offset ~= openStartPos.X.Offset or OpenButton.Position.Y.Offset ~= openStartPos.Y.Offset)
-        if moved then return end
+        if openMoved then return end
         MainFrame.Visible = not MainFrame.Visible
     end)
 
@@ -313,6 +326,7 @@ function Baritone:CreateWindow(info)
         dialogOpen = true
         dragging = false
 
+        Overlay.BackgroundTransparency = 0.99  -- не 1, иначе не перехватывает клики
         Overlay.Visible = true
         TweenService:Create(Overlay, tweenInfo, { BackgroundTransparency = 0.55 }):Play()
 
@@ -443,6 +457,37 @@ function Baritone:CreateWindow(info)
         end
 
         return Tab
+    end
+
+    -- EditOpenButton
+    function Baritone:EditOpenButton(opts)
+        opts = opts or {}
+
+        -- Текст
+        if opts.Text ~= nil then
+            OpenButton.Text = tostring(opts.Text)
+        end
+
+        -- Размер (лимит: мин 60x24, макс 300x60)
+        if opts.Size ~= nil then
+            local w = math.clamp(opts.Size.X or 120, 60, 300)
+            local h = math.clamp(opts.Size.Y or 34, 24, 60)
+            OpenButton.Size = UDim2.fromOffset(w, h)
+        end
+
+        -- OnlyMobile: скрыть кнопку если не мобила
+        if opts.OnlyMobile ~= nil then
+            if opts.OnlyMobile and not IsMobile then
+                OpenButton.Visible = false
+            else
+                OpenButton.Visible = true
+            end
+        end
+
+        -- Locked: запретить двигать
+        if opts.Locked ~= nil then
+            openLocked = opts.Locked
+        end
     end
 
     return Window
