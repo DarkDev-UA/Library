@@ -220,6 +220,7 @@ function Baritone:CreateWindow(info)
     local function showDialog()
         dialogOpen = true
         dragging = false
+        MainFrame.Active = false
         local origPos = MainFrame.Position
 
         Overlay.Visible = true
@@ -258,6 +259,7 @@ function Baritone:CreateWindow(info)
             Dialog.Visible = false
             Overlay.Visible = false
             TweenService:Create(MainFrame, tweenInfo, { Position = origPos }):Play()
+            MainFrame.Active = true
             dialogOpen = false
         end)
 
