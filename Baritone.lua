@@ -22,6 +22,21 @@ local Theme = {
     TextDim = Color3.fromRGB(150, 150, 150),
 }
 
+
+-- Lucide иконки
+local Lucide = loadstring(game:HttpGet("https://raw.githubusercontent.com/DarkDev-UA/Library/refs/heads/main/lucide-roblox.luau"))()
+
+function Baritone.GetIcon(name)
+    local ok, asset = pcall(function()
+        return Lucide.GetAsset(name, 48)
+    end)
+    if ok and asset then
+        return { Image = asset.Url, ImageRectSize = asset.ImageRectSize, ImageRectOffset = asset.ImageRectOffset }
+    end
+    return nil
+end
+
+
 local function New(class, props)
     local obj = Instance.new(class)
     for k, v in pairs(props or {}) do
@@ -120,7 +135,7 @@ function Baritone:CreateWindow(info)
         BackgroundTransparency = 1,
         Position = UDim2.fromOffset(12, 0),
         Size = UDim2.new(0, 160, 1, 0),
-        Text = "✦  " .. title,
+        Text = title,
         TextColor3 = Theme.Text,
         TextSize = 14,
         Font = Enum.Font.GothamBold,
@@ -380,6 +395,7 @@ function Baritone:CreateWindow(info)
     function Window:AddTab(tabInfo)
         tabInfo = tabInfo or {}
         local tabName = tabInfo.Name or "Tab"
+        local tabIcon = tabInfo.Icon and Baritone.GetIcon(tabInfo.Icon)
         local Tab = { Name = tabName, Groups = {} }
 
         -- Кнопка таба в сайдбаре
@@ -388,7 +404,7 @@ function Baritone:CreateWindow(info)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 0, 32),
-            Text = tabName,
+            Text = tabIcon and ("   " .. tabName) or tabName,
             TextColor3 = Theme.TextDim,
             TextSize = 13,
             Font = Enum.Font.GothamMedium,
@@ -402,6 +418,22 @@ function Baritone:CreateWindow(info)
             PaddingLeft = UDim.new(0, 10),
             Parent = TabBtn,
         })
+
+        -- Иконка таба
+        if tabIcon then
+            New("ImageLabel", {
+                AnchorPoint = Vector2.new(0, 0.5),
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 0, 0.5, 0),
+                Size = UDim2.fromOffset(16, 16),
+                Image = tabIcon.Image,
+                ImageRectSize = tabIcon.ImageRectSize,
+                ImageRectOffset = tabIcon.ImageRectOffset,
+                ImageColor3 = Theme.TextDim,
+                ZIndex = 4,
+                Parent = TabBtn,
+            })
+        end
 
         -- Контейнер контента таба
         local TabContainer = New("ScrollingFrame", {
@@ -435,9 +467,17 @@ function Baritone:CreateWindow(info)
             for _, t in pairs(Window.Tabs) do
                 t._container.Visible = false
                 TweenService:Create(t._btn, tweenInfo, { BackgroundTransparency = 1, TextColor3 = Theme.TextDim }):Play()
+                local tIcon = t._btn:FindFirstChildWhichIsA("ImageLabel")
+                if tIcon then
+                    TweenService:Create(tIcon, tweenInfo, { ImageColor3 = Theme.TextDim }):Play()
+                end
             end
             TabContainer.Visible = true
             TweenService:Create(TabBtn, tweenInfo, { BackgroundTransparency = 0, TextColor3 = Theme.Text }):Play()
+            local myIcon = TabBtn:FindFirstChildWhichIsA("ImageLabel")
+            if myIcon then
+                TweenService:Create(myIcon, tweenInfo, { ImageColor3 = Theme.Text }):Play()
+            end
             Window.ActiveTab = Tab
         end
 
