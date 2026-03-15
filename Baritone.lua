@@ -404,36 +404,62 @@ function Baritone:CreateWindow(info)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 0, 32),
-            Text = tabIcon and ("   " .. tabName) or tabName,
-            TextColor3 = Theme.TextDim,
-            TextSize = 13,
-            Font = Enum.Font.GothamMedium,
-            TextXAlignment = Enum.TextXAlignment.Left,
+            Text = "",
             ZIndex = 3,
             LayoutOrder = #Window.Tabs + 1,
             Parent = TabList,
         })
         New("UICorner", { CornerRadius = UDim.new(0, 4), Parent = TabBtn })
+
+        -- Внутренний контейнер: иконка + текст горизонтально
+        local TabInner = New("Frame", {
+            BackgroundTransparency = 1,
+            Size = UDim2.fromScale(1, 1),
+            ZIndex = 3,
+            Parent = TabBtn,
+        })
+        New("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Padding = UDim.new(0, 6),
+            Parent = TabInner,
+        })
         New("UIPadding", {
             PaddingLeft = UDim.new(0, 10),
-            Parent = TabBtn,
+            PaddingRight = UDim.new(0, 6),
+            Parent = TabInner,
         })
 
         -- Иконка таба
+        local TabIconLabel = nil
         if tabIcon then
-            New("ImageLabel", {
-                AnchorPoint = Vector2.new(0, 0.5),
+            TabIconLabel = New("ImageLabel", {
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.fromOffset(16, 16),
                 Image = tabIcon.Image,
                 ImageRectSize = tabIcon.ImageRectSize,
                 ImageRectOffset = tabIcon.ImageRectOffset,
                 ImageColor3 = Theme.TextDim,
+                LayoutOrder = 1,
                 ZIndex = 4,
-                Parent = TabBtn,
+                Parent = TabInner,
             })
         end
+
+        -- Текст таба
+        local TabLabel = New("TextLabel", {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, tabIcon and -22 or 0, 1, 0),
+            Text = tabName,
+            TextColor3 = Theme.TextDim,
+            TextSize = 13,
+            Font = Enum.Font.GothamMedium,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            LayoutOrder = 2,
+            ZIndex = 4,
+            Parent = TabInner,
+        })
 
         -- Контейнер контента таба
         local TabContainer = New("ScrollingFrame", {
@@ -463,20 +489,19 @@ function Baritone:CreateWindow(info)
         })
 
         local function activateTab()
-            -- Скрыть все табы
             for _, t in pairs(Window.Tabs) do
                 t._container.Visible = false
-                TweenService:Create(t._btn, tweenInfo, { BackgroundTransparency = 1, TextColor3 = Theme.TextDim }):Play()
-                local tIcon = t._btn:FindFirstChildWhichIsA("ImageLabel")
-                if tIcon then
-                    TweenService:Create(tIcon, tweenInfo, { ImageColor3 = Theme.TextDim }):Play()
+                TweenService:Create(t._btn, tweenInfo, { BackgroundTransparency = 1 }):Play()
+                TweenService:Create(t._label, tweenInfo, { TextColor3 = Theme.TextDim }):Play()
+                if t._icon then
+                    TweenService:Create(t._icon, tweenInfo, { ImageColor3 = Theme.TextDim }):Play()
                 end
             end
             TabContainer.Visible = true
-            TweenService:Create(TabBtn, tweenInfo, { BackgroundTransparency = 0, TextColor3 = Theme.Text }):Play()
-            local myIcon = TabBtn:FindFirstChildWhichIsA("ImageLabel")
-            if myIcon then
-                TweenService:Create(myIcon, tweenInfo, { ImageColor3 = Theme.Text }):Play()
+            TweenService:Create(TabBtn, tweenInfo, { BackgroundTransparency = 0 }):Play()
+            TweenService:Create(TabLabel, tweenInfo, { TextColor3 = Theme.Text }):Play()
+            if TabIconLabel then
+                TweenService:Create(TabIconLabel, tweenInfo, { ImageColor3 = Theme.Text }):Play()
             end
             Window.ActiveTab = Tab
         end
@@ -487,6 +512,8 @@ function Baritone:CreateWindow(info)
         end)
 
         Tab._btn = TabBtn
+        Tab._label = TabLabel
+        Tab._icon = TabIconLabel
         Tab._container = TabContainer
 
         table.insert(Window.Tabs, Tab)
