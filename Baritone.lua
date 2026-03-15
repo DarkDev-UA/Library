@@ -28,8 +28,8 @@ function Baritone:CreateWindow(info)
     local ScreenGui = New("ScreenGui", {
         Name = "BaritoneUI",
         ResetOnSpawn = false,
-        IgnoreGuiInset = true,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        ScreenInsets = Enum.ScreenInsets.None,
     })
     local ok = pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
     if not ok then ScreenGui.Parent = LocalPlayer.PlayerGui end
