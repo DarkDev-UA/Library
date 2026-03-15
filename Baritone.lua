@@ -122,6 +122,7 @@ function Baritone:CreateWindow(info)
 
     New("TextLabel", {
         BackgroundTransparency = 1,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         Position = UDim2.fromOffset(0, 15),
         Size = UDim2.new(1, 0, 0, 50),
         Text = "Вы точно хотите закрыть текущее окно?",
@@ -159,6 +160,12 @@ function Baritone:CreateWindow(info)
         Parent = Dialog,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 6), Parent = ConfirmBtn })
+
+    local function setButtonsActive(state)
+        for _, v in pairs(MainFrame:GetDescendants()) do
+            if v:IsA("TextButton") then v.Active = state end
+        end
+    end
 
     -- Dragging
     local dragging, dragStart, startPos
@@ -220,7 +227,7 @@ function Baritone:CreateWindow(info)
     local function showDialog()
         dialogOpen = true
         dragging = false
-        MainFrame.Active = false
+        setButtonsActive(false)
         local origPos = MainFrame.Position
 
         Overlay.Visible = true
@@ -259,7 +266,7 @@ function Baritone:CreateWindow(info)
             Dialog.Visible = false
             Overlay.Visible = false
             TweenService:Create(MainFrame, tweenInfo, { Position = origPos }):Play()
-            MainFrame.Active = true
+            setButtonsActive(true)
             dialogOpen = false
         end)
 
