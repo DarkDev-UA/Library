@@ -236,7 +236,7 @@ function Baritone:CreateWindow(info)
                 v.BackgroundTransparency = 1
             end
         end
-        TweenService:Create(Dialog, tweenInfo, { BackgroundTransparency = 0 }):Play()
+        TweenService:Create(Dialog, tweenInfo, { BackgroundTransparency = 1 }):Play()
         for _, v in pairs(Dialog:GetDescendants()) do
             if v:IsA("TextLabel") or v:IsA("TextButton") then
                 TweenService:Create(v, tweenInfo, { TextTransparency = 0, BackgroundTransparency = 0 }):Play()
