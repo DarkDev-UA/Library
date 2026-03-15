@@ -39,17 +39,17 @@ function Baritone:CreateWindow(info)
     local ok = pcall(function() ScreenGui.Parent = game:GetService("CoreGui") end)
     if not ok then ScreenGui.Parent = LocalPlayer.PlayerGui end
 
-    -- Кнопка открытия (прямоугольная, маленькая)
+    -- Кнопка открытия
     local OpenButton = New("TextButton", {
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
         Position = UDim2.fromOffset(10, 10),
-        Size = UDim2.fromOffset(90, 26),
+        Size = UDim2.fromOffset(120, 34),
         Text = title,
         TextColor3 = Theme.TextDim,
-        TextSize = 12,
+        TextSize = 13,
         Font = Enum.Font.GothamMedium,
-        Visible = false,
+        Visible = true,
         ZIndex = 10,
         Parent = ScreenGui,
     })
@@ -248,7 +248,7 @@ function Baritone:CreateWindow(info)
         Size = UDim2.new(0.43, 0, 0, 28),
         Text = "Продолжить",
         TextColor3 = Theme.Text,
-        TextSize = 12,
+        TextSize = 13,
         Font = Enum.Font.GothamMedium,
         ZIndex = 9,
         Parent = Dialog,
@@ -263,19 +263,12 @@ function Baritone:CreateWindow(info)
         Size = UDim2.new(0.43, 0, 0, 28),
         Text = "Закрыть",
         TextColor3 = Theme.Text,
-        TextSize = 12,
+        TextSize = 13,
         Font = Enum.Font.GothamMedium,
         ZIndex = 9,
         Parent = Dialog,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 4), Parent = ConfirmBtn })
-
-    -- Блокировка кнопок меню
-    local function setButtonsActive(state)
-        for _, v in pairs(MainFrame:GetDescendants()) do
-            if v:IsA("TextButton") then v.Active = state end
-        end
-    end
 
     -- Драг главного окна (только за топбар)
     local dragging, dragStart, startPos
@@ -303,14 +296,14 @@ function Baritone:CreateWindow(info)
 
     -- Свернуть / развернуть
     MinusButton.MouseButton1Click:Connect(function()
+        if dialogOpen then return end
         MainFrame.Visible = false
-        OpenButton.Visible = true
     end)
     OpenButton.MouseButton1Click:Connect(function()
+        if dialogOpen then return end
         local moved = openDragStart and (OpenButton.Position.X.Offset ~= openStartPos.X.Offset or OpenButton.Position.Y.Offset ~= openStartPos.Y.Offset)
         if moved then return end
-        MainFrame.Visible = true
-        OpenButton.Visible = false
+        MainFrame.Visible = not MainFrame.Visible
     end)
 
     -- Диалог закрытия
@@ -319,7 +312,6 @@ function Baritone:CreateWindow(info)
     local function showDialog()
         dialogOpen = true
         dragging = false
-        setButtonsActive(false)
 
         Overlay.Visible = true
         TweenService:Create(Overlay, tweenInfo, { BackgroundTransparency = 0.55 }):Play()
@@ -359,7 +351,6 @@ function Baritone:CreateWindow(info)
             task.wait(0.25)
             Dialog.Visible = false
             Overlay.Visible = false
-            setButtonsActive(true)
             dialogOpen = false
         end)
         confirmConn = ConfirmBtn.MouseButton1Click:Connect(function()
@@ -436,7 +427,10 @@ function Baritone:CreateWindow(info)
             Window.ActiveTab = Tab
         end
 
-        TabBtn.MouseButton1Click:Connect(activateTab)
+        TabBtn.MouseButton1Click:Connect(function()
+            if dialogOpen then return end
+            activateTab()
+        end)
 
         Tab._btn = TabBtn
         Tab._container = TabContainer
