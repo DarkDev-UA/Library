@@ -14,12 +14,13 @@ local IsMobile = (function()
 end)()
 
 local Theme = {
-    Background = Color3.fromRGB(18, 18, 18),
-    Surface = Color3.fromRGB(24, 24, 24),
-    Border = Color3.fromRGB(40, 40, 40),
-    Accent = Color3.fromRGB(180, 20, 40),
-    Text = Color3.fromRGB(255, 255, 255),
-    TextDim = Color3.fromRGB(150, 150, 150),
+    Background = Color3.fromRGB(12, 12, 12),   -- основной фон
+    Surface = Color3.fromRGB(18, 18, 18),       -- панели / сайдбар
+    Border = Color3.fromRGB(120, 15, 35),       -- бордовая обводка
+    Accent = Color3.fromRGB(150, 20, 45),       -- акцент (кнопки)
+    AccentHover = Color3.fromRGB(180, 25, 55),  -- акцент при hover
+    Text = Color3.fromRGB(220, 220, 220),       -- основной текст
+    TextDim = Color3.fromRGB(100, 100, 100),    -- приглушённый текст
 }
 
 
@@ -64,7 +65,7 @@ function Baritone:CreateWindow(info)
 
     -- Кнопка открытия
     local OpenButton = New("TextButton", {
-        BackgroundColor3 = Theme.Surface,
+        BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
         Position = UDim2.fromOffset(10, 55),
         Size = UDim2.fromOffset(120, 34),
@@ -118,7 +119,7 @@ function Baritone:CreateWindow(info)
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 6), Parent = MainFrame })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = MainFrame })
+    New("UIStroke", { Color = Theme.Border, Thickness = 1.5, Parent = MainFrame })
 
     -- Топбар
     local TopBar = New("Frame", {
@@ -470,7 +471,7 @@ function Baritone:CreateWindow(info)
             CanvasSize = UDim2.fromScale(0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.Y,
             ScrollBarThickness = 3,
-            ScrollBarImageColor3 = Theme.Border,
+            ScrollBarImageColor3 = Theme.Accent,
             Visible = false,
             ZIndex = 2,
             Parent = ContentArea,
