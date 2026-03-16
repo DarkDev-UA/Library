@@ -78,7 +78,7 @@ function Baritone:CreateWindow(info)
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 4), Parent = OpenButton })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = OpenButton })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = OpenButton })
 
     -- Драг кнопки открытия
     local openDragging, openDragStart, openStartPos, openMoved
@@ -119,7 +119,7 @@ function Baritone:CreateWindow(info)
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 6), Parent = MainFrame })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1.5, Parent = MainFrame })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = MainFrame })
 
     -- Топбар
     local TopBar = New("Frame", {
@@ -129,7 +129,7 @@ function Baritone:CreateWindow(info)
         ZIndex = 2,
         Parent = MainFrame,
     })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = TopBar })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = TopBar })
 
     -- Лого / иконка
     local LogoLabel = New("TextLabel", {
@@ -180,7 +180,7 @@ function Baritone:CreateWindow(info)
         ZIndex = 2,
         Parent = MainFrame,
     })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = Sidebar })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = Sidebar })
 
     local TabList = New("Frame", {
         BackgroundTransparency = 1,
@@ -220,7 +220,7 @@ function Baritone:CreateWindow(info)
         ZIndex = 2,
         Parent = MainFrame,
     })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = Footer })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = Footer })
     New("TextLabel", {
         BackgroundTransparency = 1,
         Size = UDim2.fromScale(1, 1),
@@ -255,7 +255,7 @@ function Baritone:CreateWindow(info)
         Parent = ScreenGui,
     })
     New("UICorner", { CornerRadius = UDim.new(0, 6), Parent = Dialog })
-    New("UIStroke", { Color = Theme.Border, Thickness = 1, Parent = Dialog })
+    New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = Dialog })
 
     New("TextLabel", {
         BackgroundTransparency = 1,
@@ -411,6 +411,7 @@ function Baritone:CreateWindow(info)
             Parent = TabList,
         })
         New("UICorner", { CornerRadius = UDim.new(0, 4), Parent = TabBtn })
+        New("UIStroke", { Color = Theme.Border, Thickness = 2.5, Parent = TabBtn })
 
         -- Внутренний контейнер: иконка + текст горизонтально
         local TabInner = New("Frame", {
